@@ -22,9 +22,7 @@
 @if (product(); as product) {
   <section class="product-summary">
     <div class="summary-main">
-      @if (product.imageUrl) {
-        <img class="summary-image" [src]="product.imageUrl" [alt]="product.name" />
-      }
+      <app-product-image class="summary-image" [src]="product.imageUrl" [alt]="product.name" />
       <div>
         <h2>
           <a [routerLink]="['/products', product.id]">{{ product.name }}</a>

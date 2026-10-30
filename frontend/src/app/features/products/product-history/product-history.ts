@@ -13,6 +13,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { TransactionService } from '../../../core/services/transaction.service';
 import { DynamicFilter } from '../../../shared/components/dynamic-filter/dynamic-filter';
 import { FilterValues } from '../../../shared/components/dynamic-filter/dynamic-filter.models';
+import { ProductImage } from '../../../shared/components/product-image/product-image';
 import { TransactionDeleteFlow } from '../../transactions/transaction-delete';
 import { toTransactionQueryFilters, transactionFilterFields } from '../../transactions/transaction-filters';
 import { TransactionTable } from '../../transactions/transaction-table/transaction-table';
@@ -28,6 +29,7 @@ import { TransactionTable } from '../../transactions/transaction-table/transacti
     MatPaginatorModule,
     MatProgressBarModule,
     DynamicFilter,
+    ProductImage,
     TransactionTable,
   ],
   templateUrl: './product-history.html',

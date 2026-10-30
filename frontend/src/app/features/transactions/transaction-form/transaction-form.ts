@@ -24,6 +24,7 @@ import {
 import { NotificationService } from '../../../core/services/notification.service';
 import { ProductService } from '../../../core/services/product.service';
 import { TransactionService } from '../../../core/services/transaction.service';
+import { ProductImage } from '../../../shared/components/product-image/product-image';
 import { AppValidators } from '../../../shared/forms/app-validators';
 import { applyServerErrors, fieldErrorMessage } from '../../../shared/forms/form-errors';
 import { isSameDay, transactionDateIso } from '../../../shared/utils/date-utils';
@@ -49,6 +50,7 @@ interface InitialData {
     MatIconModule,
     MatInputModule,
     MatProgressBarModule,
+    ProductImage,
   ],
   templateUrl: './transaction-form.html',
   styleUrl: './transaction-form.scss',

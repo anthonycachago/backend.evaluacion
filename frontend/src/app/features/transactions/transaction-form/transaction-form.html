@@ -122,9 +122,7 @@
 
     @if (selectedProduct(); as product) {
       <div class="summary-product">
-        @if (product.imageUrl) {
-          <img [src]="product.imageUrl" [alt]="product.name" />
-        }
+        <app-product-image class="summary-image" [src]="product.imageUrl" [alt]="product.name" />
         <div>
           <strong>{{ product.name }}</strong>
           <span class="text-muted">{{ product.category }}</span>

@@ -19,6 +19,7 @@ import { ProductService } from '../../../core/services/product.service';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.service';
 import { DynamicFilter } from '../../../shared/components/dynamic-filter/dynamic-filter';
 import { FilterField, FilterValues } from '../../../shared/components/dynamic-filter/dynamic-filter.models';
+import { ProductImage } from '../../../shared/components/product-image/product-image';
 
 interface ColumnOption {
   key: string;
@@ -43,6 +44,7 @@ const LOW_STOCK_THRESHOLD = 5;
     MatTableModule,
     MatTooltipModule,
     DynamicFilter,
+    ProductImage,
   ],
   templateUrl: './product-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

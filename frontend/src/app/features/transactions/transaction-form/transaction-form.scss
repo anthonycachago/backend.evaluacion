@@ -44,14 +44,13 @@
   gap: 12px;
   margin-bottom: 16px;
 
-  img {
+  .summary-image {
+    flex: none;
     width: 48px;
     height: 48px;
-    border-radius: 8px;
-    object-fit: cover;
   }
 
-  div {
+  > div {
     display: flex;
     flex-direction: column;
   }

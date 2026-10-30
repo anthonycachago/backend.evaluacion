@@ -41,11 +41,7 @@
       <ng-container matColumnDef="image">
         <th mat-header-cell *matHeaderCellDef>Imagen</th>
         <td mat-cell *matCellDef="let product">
-          @if (product.imageUrl) {
-            <img class="product-thumb" [src]="product.imageUrl" [alt]="product.name" loading="lazy" />
-          } @else {
-            <mat-icon class="product-thumb">image_not_supported</mat-icon>
-          }
+          <app-product-image class="product-thumb" [src]="product.imageUrl" [alt]="product.name" />
         </td>
       </ng-container>
 

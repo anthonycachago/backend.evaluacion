@@ -10,11 +10,12 @@ import { Product } from '../../../core/models/product.models';
 import { NotificationService } from '../../../core/services/notification.service';
 import { ProductService } from '../../../core/services/product.service';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.service';
+import { ProductImage } from '../../../shared/components/product-image/product-image';
 
 /** Consulta de solo lectura de la información de un producto. */
 @Component({
   selector: 'app-product-detail',
-  imports: [CurrencyPipe, DatePipe, RouterLink, MatButtonModule, MatIconModule, MatProgressBarModule],
+  imports: [CurrencyPipe, DatePipe, RouterLink, MatButtonModule, MatIconModule, MatProgressBarModule, ProductImage],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

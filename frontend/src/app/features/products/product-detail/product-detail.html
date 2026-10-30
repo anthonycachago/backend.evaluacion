@@ -19,13 +19,7 @@
   @let product = productResource.value();
 
   <section class="detail-card product-detail">
-    <div class="product-image">
-      @if (product.imageUrl) {
-        <img [src]="product.imageUrl" [alt]="product.name" />
-      } @else {
-        <mat-icon>image_not_supported</mat-icon>
-      }
-    </div>
+    <app-product-image class="detail-image" [src]="product.imageUrl" [alt]="product.name" />
 
     <div class="product-info">
       <div class="product-title">

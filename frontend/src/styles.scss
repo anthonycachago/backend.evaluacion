@@ -111,10 +111,17 @@ body {
 .product-thumb {
   width: 40px;
   height: 40px;
-  border-radius: 8px;
-  object-fit: cover;
-  background: var(--mat-sys-surface-container);
-  vertical-align: middle;
+}
+
+/* Enlaces de texto con el color del tema (no afecta a los botones) */
+a:not(.mat-mdc-button-base) {
+  color: var(--mat-sys-primary);
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 /* ---------- Etiquetas de estado ---------- */
@@ -160,7 +167,7 @@ body {
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px 16px;
+  gap: 20px 16px;
 }
 
 .form-grid .full-width {
