@@ -1,0 +1,167 @@
+<header class="page-header">
+  <div>
+    <h1>{{ isEdit() ? 'Editar transacción' : 'Nueva transacción' }}</h1>
+    <p>Registre una compra (ingresa stock) o una venta (descuenta stock).</p>
+  </div>
+  <div class="page-actions">
+    <a mat-button routerLink="/transactions">
+      <mat-icon>arrow_back</mat-icon>
+      Volver al listado
+    </a>
+  </div>
+</header>
+
+<div class="transaction-layout">
+  <form class="form-card" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    @if (initialResource.isLoading() || saving()) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+
+    <div class="type-toggle">
+      <span class="text-muted">Tipo de transacción</span>
+      <mat-button-toggle-group formControlName="type" aria-label="Tipo de transacción">
+        <mat-button-toggle value="Purchase">
+          <mat-icon>south_west</mat-icon>
+          Compra
+        </mat-button-toggle>
+        <mat-button-toggle value="Sale">
+          <mat-icon>north_east</mat-icon>
+          Venta
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+    <div class="form-grid">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Producto</mat-label>
+        <mat-icon matIconPrefix>search</mat-icon>
+        <input
+          matInput
+          formControlName="product"
+          placeholder="Escriba para buscar un producto"
+          [matAutocomplete]="productAuto"
+          required
+        />
+        <mat-autocomplete #productAuto="matAutocomplete" [displayWith]="displayProduct" (optionSelected)="onProductSelected($event)">
+          @if (productOptions.hasValue()) {
+            @for (product of productOptions.value(); track product.id) {
+              <mat-option [value]="product">
+                <div class="product-option">
+                  <span>{{ product.name }}</span>
+                  <span class="text-muted">Stock: {{ product.stock }} · {{ product.price | currency: 'USD' }}</span>
+                </div>
+              </mat-option>
+            } @empty {
+              <mat-option disabled>No se encontraron productos</mat-option>
+            }
+          }
+        </mat-autocomplete>
+        @if (fieldErrorMessage(form.controls.product); as error) {
+          <mat-error>{{ error }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha</mat-label>
+        <input matInput [matDatepicker]="datePicker" formControlName="date" [max]="today" placeholder="dd/mm/aaaa" required />
+        <mat-datepicker-toggle matIconSuffix [for]="datePicker" />
+        <mat-datepicker #datePicker />
+        @if (fieldErrorMessage(form.controls.date); as error) {
+          <mat-error>{{ error }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Cantidad</mat-label>
+        <input matInput type="number" formControlName="quantity" min="1" step="1" required />
+        @if (form.controls.type.value === 'Sale' && availableStock() !== null) {
+          <mat-hint>Disponible para vender: {{ availableStock() }}</mat-hint>
+        }
+        @if (fieldErrorMessage(form.controls.quantity); as error) {
+          <mat-error>{{ error }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Precio unitario</mat-label>
+        <span matTextPrefix>$&nbsp;</span>
+        <input matInput type="number" formControlName="unitPrice" min="0.01" step="0.01" required />
+        @if (fieldErrorMessage(form.controls.unitPrice); as error) {
+          <mat-error>{{ error }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Precio total</mat-label>
+        <span matTextPrefix>$&nbsp;</span>
+        <input matInput [value]="total().toFixed(2)" readonly tabindex="-1" />
+        <mat-hint>Cantidad × precio unitario</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Detalle</mat-label>
+        <textarea matInput formControlName="detail" rows="3" maxlength="500" placeholder="Ej. Factura 001-002-0001234"></textarea>
+        <mat-hint align="end">{{ form.controls.detail.value.length }}/500</mat-hint>
+        @if (fieldErrorMessage(form.controls.detail); as error) {
+          <mat-error>{{ error }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="form-actions">
+      <a mat-button routerLink="/transactions">Cancelar</a>
+      <button mat-flat-button type="submit" [disabled]="saving()">
+        <mat-icon>save</mat-icon>
+        {{ isEdit() ? 'Guardar cambios' : 'Registrar ' + typeLabels[form.controls.type.value].toLowerCase() }}
+      </button>
+    </div>
+  </form>
+
+  <aside class="summary-card" aria-label="Resumen de la operación">
+    <h2>Resumen</h2>
+
+    @if (selectedProduct(); as product) {
+      <div class="summary-product">
+        @if (product.imageUrl) {
+          <img [src]="product.imageUrl" [alt]="product.name" />
+        }
+        <div>
+          <strong>{{ product.name }}</strong>
+          <span class="text-muted">{{ product.category }}</span>
+        </div>
+      </div>
+
+      <dl class="summary-list">
+        <dt>Stock actual</dt>
+        <dd>{{ product.stock }}</dd>
+
+        @if (original(); as original) {
+          @if (original.productId === product.id) {
+            <dt>Disponible (sin esta transacción)</dt>
+            <dd>{{ availableStock() }}</dd>
+          }
+        }
+
+        <dt>{{ form.controls.type.value === 'Sale' ? 'Salida' : 'Entrada' }}</dt>
+        <dd>{{ form.controls.type.value === 'Sale' ? '−' : '+' }}{{ form.controls.quantity.value ?? 0 }}</dd>
+
+        <dt>Stock resultante</dt>
+        <dd [class.text-danger]="(resultingStock() ?? 0) < 0">
+          <strong>{{ resultingStock() }}</strong>
+        </dd>
+
+        <dt>Total</dt>
+        <dd><strong>{{ total() | currency: 'USD' }}</strong></dd>
+      </dl>
+
+      @if ((resultingStock() ?? 0) < 0) {
+        <p class="summary-warning">
+          <mat-icon>warning</mat-icon>
+          No hay stock suficiente para esta venta.
+        </p>
+      }
+    } @else {
+      <p class="text-muted">Seleccione un producto para ver su stock y el resultado de la operación.</p>
+    }
+  </aside>
+</div>

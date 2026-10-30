@@ -1,0 +1,46 @@
+<header class="page-header">
+  <div>
+    <h1>Transacciones</h1>
+    <p>Compras y ventas registradas. Cada movimiento actualiza el stock del producto.</p>
+  </div>
+  <div class="page-actions">
+    <a mat-flat-button routerLink="/transactions/new">
+      <mat-icon>add</mat-icon>
+      Nueva transacción
+    </a>
+  </div>
+</header>
+
+<app-dynamic-filter [fields]="filterFields()" (filtersChange)="onFiltersChange($event)" />
+
+<section class="table-card">
+  @if (transactionsResource.isLoading()) {
+    <mat-progress-bar class="loading-bar" mode="indeterminate" />
+  }
+
+  <div class="table-toolbar">
+    <span>{{ page()?.totalCount ?? 0 }} transacción(es) encontradas</span>
+  </div>
+
+  <app-transaction-table
+    [transactions]="page()?.items ?? []"
+    (sortChange)="onSortChange($event)"
+    (deleteRequested)="delete($event)"
+  />
+
+  @if (!transactionsResource.isLoading() && (page()?.items?.length ?? 0) === 0) {
+    <div class="empty-state">
+      <mat-icon>receipt_long</mat-icon>
+      <p>No se encontraron transacciones con los filtros aplicados.</p>
+    </div>
+  }
+
+  <mat-paginator
+    [length]="page()?.totalCount ?? 0"
+    [pageIndex]="paging().pageNumber - 1"
+    [pageSize]="paging().pageSize"
+    [pageSizeOptions]="[5, 10, 25, 50]"
+    showFirstLastButtons
+    (page)="onPageChange($event)"
+  />
+</section>

@@ -1,0 +1,97 @@
+<section class="filter-panel" aria-label="Filtros">
+  <div class="filter-header">
+    <div class="filter-title">
+      <mat-icon>filter_list</mat-icon>
+      <span>Filtros</span>
+    </div>
+
+    <button mat-stroked-button type="button" [matMenuTriggerFor]="addMenu" [disabled]="availableFields().length === 0">
+      <mat-icon>add</mat-icon>
+      Agregar filtro
+    </button>
+    <mat-menu #addMenu="matMenu">
+      @for (field of availableFields(); track field.key) {
+        <button mat-menu-item type="button" (click)="addFilter(field)">{{ field.label }}</button>
+      }
+    </mat-menu>
+  </div>
+
+  @if (activeFields().length > 0) {
+    <form class="filter-fields" [formGroup]="form" (ngSubmit)="apply()">
+      @for (field of activeFields(); track field.key) {
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ field.label }}</mat-label>
+
+          @switch (field.type) {
+            @case ('select') {
+              <mat-select [formControlName]="field.key">
+                @for (option of field.options ?? []; track option.value) {
+                  <mat-option [value]="option.value">{{ option.label }}</mat-option>
+                }
+              </mat-select>
+            }
+            @case ('date') {
+              <input
+                matInput
+                [matDatepicker]="picker"
+                [formControlName]="field.key"
+                placeholder="dd/mm/aaaa"
+                (click)="picker.open()"
+              />
+              <mat-datepicker #picker />
+            }
+            @case ('number') {
+              <input matInput type="number" [min]="field.min ?? null" [formControlName]="field.key" [placeholder]="field.placeholder ?? ''" />
+            }
+            @default {
+              <input matInput [formControlName]="field.key" [placeholder]="field.placeholder ?? ''" />
+            }
+          }
+
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            matTooltip="Quitar filtro"
+            [attr.aria-label]="'Quitar filtro ' + field.label"
+            (click)="removeFilter(field.key)"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+
+          @if (fieldErrorMessage(form.get(field.key)); as error) {
+            <mat-error>{{ error }}</mat-error>
+          }
+        </mat-form-field>
+      }
+
+      <div class="filter-actions">
+        <button mat-flat-button type="submit">
+          <mat-icon>search</mat-icon>
+          Aplicar
+        </button>
+        <button mat-button type="button" (click)="clear()">Limpiar</button>
+      </div>
+    </form>
+  } @else {
+    <p class="filter-hint">Use “Agregar filtro” para buscar por los campos que necesite.</p>
+  }
+
+  @if (appliedEntries().length > 0) {
+    <mat-chip-set class="filter-chips" aria-label="Filtros aplicados">
+      @for (entry of appliedEntries(); track entry.key) {
+        <mat-chip (removed)="removeFilter(entry.key)">
+          {{ entry.field?.label }}:
+          @if (isDate(entry.value)) {
+            {{ entry.value | date: 'dd/MM/yyyy' }}
+          } @else {
+            {{ optionLabel(entry.field, entry.value) }}
+          }
+          <button matChipRemove [attr.aria-label]="'Quitar ' + entry.field?.label">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip>
+      }
+    </mat-chip-set>
+  }
+</section>

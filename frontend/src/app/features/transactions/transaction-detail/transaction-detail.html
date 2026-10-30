@@ -1,0 +1,89 @@
+<header class="page-header">
+  <div>
+    <h1>Detalle de la transacción</h1>
+    <p>Consulta de la información registrada.</p>
+  </div>
+  <div class="page-actions">
+    <a mat-button routerLink="/transactions">
+      <mat-icon>arrow_back</mat-icon>
+      Volver al listado
+    </a>
+  </div>
+</header>
+
+@if (transactionResource.isLoading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+@if (transactionResource.hasValue()) {
+  @let tx = transactionResource.value();
+
+  <section class="detail-card">
+    <dl class="detail-grid">
+      <div>
+        <dt>Tipo</dt>
+        <dd>
+          <span class="badge" [class.badge-success]="tx.type === 'Purchase'" [class.badge-danger]="tx.type === 'Sale'">
+            {{ typeLabels[tx.type] }}
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt>Fecha</dt>
+        <dd>{{ tx.date | date: 'dd/MM/yyyy HH:mm' }}</dd>
+      </div>
+      <div>
+        <dt>Producto</dt>
+        <dd>
+          @if (tx.productName) {
+            <a [routerLink]="['/products', tx.productId, 'history']">{{ tx.productName }}</a>
+            @if (tx.productIsDeleted) {
+              <span class="badge badge-neutral">Eliminado</span>
+            }
+          } @else {
+            <span class="text-muted">No disponible</span>
+          }
+        </dd>
+      </div>
+      <div>
+        <dt>Stock actual del producto</dt>
+        <dd>{{ tx.productStock ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Cantidad</dt>
+        <dd>{{ tx.quantity }}</dd>
+      </div>
+      <div>
+        <dt>Precio unitario</dt>
+        <dd>{{ tx.unitPrice | currency: 'USD' }}</dd>
+      </div>
+      <div>
+        <dt>Precio total</dt>
+        <dd><strong>{{ tx.totalPrice | currency: 'USD' }}</strong></dd>
+      </div>
+      <div>
+        <dt>Registrada</dt>
+        <dd>{{ tx.createdAt | date: 'dd/MM/yyyy HH:mm' }}</dd>
+      </div>
+      <div class="full-width">
+        <dt>Detalle</dt>
+        <dd>{{ tx.detail ?? 'Sin detalle' }}</dd>
+      </div>
+      <div class="full-width">
+        <dt>Identificador</dt>
+        <dd>{{ tx.id }}</dd>
+      </div>
+    </dl>
+
+    <div class="form-actions">
+      <button mat-button type="button" class="text-danger" (click)="delete(tx)">
+        <mat-icon>delete</mat-icon>
+        Eliminar
+      </button>
+      <a mat-flat-button [routerLink]="['/transactions', tx.id, 'edit']">
+        <mat-icon>edit</mat-icon>
+        Editar
+      </a>
+    </div>
+  </section>
+}

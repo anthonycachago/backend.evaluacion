@@ -1,0 +1,99 @@
+<header class="page-header">
+  <div>
+    <h1>{{ isEdit() ? 'Editar producto' : 'Nuevo producto' }}</h1>
+    <p>{{ isEdit() ? 'Modifique los datos del producto.' : 'Complete los datos para registrar un producto.' }}</p>
+  </div>
+  <div class="page-actions">
+    <a mat-button routerLink="/products">
+      <mat-icon>arrow_back</mat-icon>
+      Volver al listado
+    </a>
+  </div>
+</header>
+
+<form class="form-card product-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  @if (productResource.isLoading() || saving()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  <div class="product-form-layout">
+    <div class="form-grid">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="name" maxlength="150" required />
+        <mat-hint align="end">{{ form.controls.name.value.length }}/150</mat-hint>
+        @if (fieldErrorMessage(form.controls.name); as error) {
+          <mat-error>{{ error }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Categoría</mat-label>
+        <input matInput formControlName="category" maxlength="100" [matAutocomplete]="categoryAuto" required />
+        <mat-autocomplete #categoryAuto="matAutocomplete">
+          @for (category of categorySuggestions(); track category) {
+            <mat-option [value]="category">{{ category }}</mat-option>
+          }
+        </mat-autocomplete>
+        <mat-hint>Elija una existente o escriba una nueva</mat-hint>
+        @if (fieldErrorMessage(form.controls.category); as error) {
+          <mat-error>{{ error }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Precio</mat-label>
+        <span matTextPrefix>$&nbsp;</span>
+        <input matInput type="number" formControlName="price" min="0.01" step="0.01" required />
+        @if (fieldErrorMessage(form.controls.price); as error) {
+          <mat-error>{{ error }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ isEdit() ? 'Stock actual' : 'Stock inicial' }}</mat-label>
+        <input matInput type="number" formControlName="stock" min="0" step="1" />
+        @if (isEdit()) {
+          <mat-hint>El stock se modifica registrando compras o ventas</mat-hint>
+        }
+        @if (fieldErrorMessage(form.controls.stock); as error) {
+          <mat-error>{{ error }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>URL de la imagen</mat-label>
+        <input matInput formControlName="imageUrl" maxlength="500" placeholder="https://..." />
+        @if (fieldErrorMessage(form.controls.imageUrl); as error) {
+          <mat-error>{{ error }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="description" rows="3" maxlength="1000"></textarea>
+        <mat-hint align="end">{{ form.controls.description.value.length }}/1000</mat-hint>
+        @if (fieldErrorMessage(form.controls.description); as error) {
+          <mat-error>{{ error }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <aside class="image-preview" aria-label="Vista previa de la imagen">
+      @if (imagePreview() && !imageFailed()) {
+        <img [src]="imagePreview()" alt="Vista previa" (error)="imageFailed.set(true)" />
+      } @else {
+        <mat-icon>{{ imageFailed() ? 'broken_image' : 'image' }}</mat-icon>
+        <span>{{ imageFailed() ? 'No se pudo cargar la imagen' : 'Vista previa de la imagen' }}</span>
+      }
+    </aside>
+  </div>
+
+  <div class="form-actions">
+    <a mat-button routerLink="/products">Cancelar</a>
+    <button mat-flat-button type="submit" [disabled]="saving()">
+      <mat-icon>save</mat-icon>
+      {{ isEdit() ? 'Guardar cambios' : 'Crear producto' }}
+    </button>
+  </div>
+</form>

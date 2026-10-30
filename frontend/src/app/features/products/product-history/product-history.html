@@ -1,0 +1,79 @@
+<header class="page-header">
+  <div>
+    <h1>Historial de transacciones</h1>
+    <p>Movimientos de compra y venta del producto.</p>
+  </div>
+  <div class="page-actions">
+    <a mat-button routerLink="/products">
+      <mat-icon>arrow_back</mat-icon>
+      Volver a productos
+    </a>
+    @if (product(); as product) {
+      @if (!product.isDeleted) {
+        <a mat-flat-button routerLink="/transactions/new" [queryParams]="{ productId: product.id }">
+          <mat-icon>add</mat-icon>
+          Registrar transacción
+        </a>
+      }
+    }
+  </div>
+</header>
+
+@if (product(); as product) {
+  <section class="product-summary">
+    <div class="summary-main">
+      @if (product.imageUrl) {
+        <img class="summary-image" [src]="product.imageUrl" [alt]="product.name" />
+      }
+      <div>
+        <h2>
+          <a [routerLink]="['/products', product.id]">{{ product.name }}</a>
+          @if (product.isDeleted) {
+            <span class="badge badge-neutral">Eliminado</span>
+          }
+        </h2>
+        <span class="text-muted">{{ product.category }} · {{ product.price | currency: 'USD' }}</span>
+      </div>
+    </div>
+
+    <div class="summary-stock">
+      <span class="text-muted">Stock actual</span>
+      <strong [class.text-danger]="product.stock === 0">{{ product.stock }}</strong>
+    </div>
+  </section>
+}
+
+<app-dynamic-filter [fields]="filterFields" (filtersChange)="onFiltersChange($event)" />
+
+<section class="table-card">
+  @if (historyResource.isLoading()) {
+    <mat-progress-bar class="loading-bar" mode="indeterminate" />
+  }
+
+  <div class="table-toolbar">
+    <span>{{ page()?.totalCount ?? 0 }} transacción(es) encontradas</span>
+  </div>
+
+  <app-transaction-table
+    [transactions]="page()?.items ?? []"
+    [showProduct]="false"
+    (sortChange)="onSortChange($event)"
+    (deleteRequested)="delete($event)"
+  />
+
+  @if (!historyResource.isLoading() && (page()?.items?.length ?? 0) === 0) {
+    <div class="empty-state">
+      <mat-icon>receipt_long</mat-icon>
+      <p>Este producto no tiene transacciones con los filtros aplicados.</p>
+    </div>
+  }
+
+  <mat-paginator
+    [length]="page()?.totalCount ?? 0"
+    [pageIndex]="paging().pageNumber - 1"
+    [pageSize]="paging().pageSize"
+    [pageSizeOptions]="[5, 10, 25, 50]"
+    showFirstLastButtons
+    (page)="onPageChange($event)"
+  />
+</section>

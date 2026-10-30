@@ -1,0 +1,89 @@
+<header class="page-header">
+  <div>
+    <h1>Detalle del producto</h1>
+    <p>Consulta de la información registrada.</p>
+  </div>
+  <div class="page-actions">
+    <a mat-button routerLink="/products">
+      <mat-icon>arrow_back</mat-icon>
+      Volver al listado
+    </a>
+  </div>
+</header>
+
+@if (productResource.isLoading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+@if (productResource.hasValue()) {
+  @let product = productResource.value();
+
+  <section class="detail-card product-detail">
+    <div class="product-image">
+      @if (product.imageUrl) {
+        <img [src]="product.imageUrl" [alt]="product.name" />
+      } @else {
+        <mat-icon>image_not_supported</mat-icon>
+      }
+    </div>
+
+    <div class="product-info">
+      <div class="product-title">
+        <h2>{{ product.name }}</h2>
+        <span class="badge badge-neutral">{{ product.category }}</span>
+      </div>
+
+      <dl class="detail-grid">
+        <div>
+          <dt>Precio</dt>
+          <dd>{{ product.price | currency: 'USD' }}</dd>
+        </div>
+        <div>
+          <dt>Stock disponible</dt>
+          <dd>
+            @if (product.stock === 0) {
+              <span class="badge badge-danger">Agotado</span>
+            } @else {
+              {{ product.stock }} unidades
+            }
+          </dd>
+        </div>
+        <div>
+          <dt>Creado</dt>
+          <dd>{{ product.createdAt | date: 'dd/MM/yyyy HH:mm' }}</dd>
+        </div>
+        <div>
+          <dt>Última modificación</dt>
+          <dd>{{ product.updatedAt ? (product.updatedAt | date: 'dd/MM/yyyy HH:mm') : '—' }}</dd>
+        </div>
+        <div class="full-width">
+          <dt>Descripción</dt>
+          <dd>{{ product.description ?? 'Sin descripción' }}</dd>
+        </div>
+        <div class="full-width">
+          <dt>Identificador</dt>
+          <dd class="mono">{{ product.id }}</dd>
+        </div>
+      </dl>
+
+      <div class="page-actions detail-actions">
+        <a mat-flat-button [routerLink]="['/products', product.id, 'edit']">
+          <mat-icon>edit</mat-icon>
+          Editar
+        </a>
+        <a mat-stroked-button [routerLink]="['/products', product.id, 'history']">
+          <mat-icon>history</mat-icon>
+          Ver historial
+        </a>
+        <a mat-stroked-button routerLink="/transactions/new" [queryParams]="{ productId: product.id }">
+          <mat-icon>add_shopping_cart</mat-icon>
+          Registrar compra/venta
+        </a>
+        <button mat-button type="button" class="text-danger" (click)="delete(product)">
+          <mat-icon>delete</mat-icon>
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </section>
+}

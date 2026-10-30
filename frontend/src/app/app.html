@@ -1,0 +1,21 @@
+<mat-toolbar class="app-toolbar">
+  <a class="brand" routerLink="/products">
+    <mat-icon>inventory_2</mat-icon>
+    <span>Inventario</span>
+  </a>
+
+  <nav class="nav-links" aria-label="Navegación principal">
+    <a mat-button routerLink="/products" routerLinkActive="active-link">
+      <mat-icon>category</mat-icon>
+      Productos
+    </a>
+    <a mat-button routerLink="/transactions" routerLinkActive="active-link">
+      <mat-icon>swap_horiz</mat-icon>
+      Transacciones
+    </a>
+  </nav>
+</mat-toolbar>
+
+<main class="app-content">
+  <router-outlet />
+</main>

@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Products/">
+    <Project Path="src/Products/Products.Api/Products.Api.csproj" />
+    <Project Path="src/Products/Products.Business/Products.Business.csproj" />
+    <Project Path="src/Products/Products.Core/Products.Core.csproj" />
+    <Project Path="src/Products/Products.Infrastructure/Products.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Transactions/">
+    <Project Path="src/Transactions/Transactions.Api/Transactions.Api.csproj" />
+    <Project Path="src/Transactions/Transactions.Business/Transactions.Business.csproj" />
+    <Project Path="src/Transactions/Transactions.Core/Transactions.Core.csproj" />
+    <Project Path="src/Transactions/Transactions.Infrastructure/Transactions.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Products.UnitTests/Products.UnitTests.csproj" />
+    <Project Path="tests/Transactions.UnitTests/Transactions.UnitTests.csproj" />
+  </Folder>
+</Solution>
